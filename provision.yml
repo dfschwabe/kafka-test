@@ -1,0 +1,30 @@
+- hosts: all
+  become: yes
+  become_user: root
+  gather_facts: False
+  tasks:
+    - name: add repo for java 8
+      apt_repository: repo='ppa:webupd8team/java' state=present
+
+    - name: set licence selected
+      shell: /bin/echo debconf shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections
+      sudo: yes
+
+    - name: set licence seen
+      shell: /bin/echo debconf shared/accepted-oracle-license-v1-1 seen true | /usr/bin/debconf-set-selections
+      sudo: yes
+
+    - name: install java 8
+      apt: name=oracle-java8-installer state=latest update-cache=yes force=yes
+      sudo: yes
+
+    - name: download kafka tarball
+      get_url:
+        url: http://mirror.metrocast.net/apache/kafka/0.11.0.0/kafka_2.11-0.11.0.0.tgz;
+        dest: /home/vagrant
+
+    - name: extract kafka binary
+      shell: "tar xfz /home/vagrant/kafka_2.11-0.11.0.0.tgz"
+
+    - name: run kafka
+      shell: "sudo /vagrant/scripts/init.sh"
