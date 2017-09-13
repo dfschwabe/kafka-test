@@ -60,7 +60,7 @@ public class WordCountApplication {
 
         KStreamBuilder builder = new KStreamBuilder();
 
-        KStream<String, String> source = builder.stream("streams-file-input");
+        KStream<String, String> source = builder.stream("stream1");
 
         KTable<String, Long> counts = source
                 .flatMapValues(new ValueMapper<String, Iterable<String>>() {
@@ -78,7 +78,7 @@ public class WordCountApplication {
                 .count("Counts");
 
         // need to override value serde to Long type
-        counts.to(Serdes.String(), Serdes.Long(), "streams-wordcount-output");
+        counts.to(Serdes.String(), Serdes.Long(), "stream2");
 
         final KafkaStreams streams = new KafkaStreams(builder, props);
         final CountDownLatch latch = new CountDownLatch(1);
