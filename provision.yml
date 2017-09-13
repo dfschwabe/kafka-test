@@ -20,11 +20,21 @@
 
     - name: download kafka tarball
       get_url:
-        url: http://mirror.metrocast.net/apache/kafka/0.11.0.0/kafka_2.11-0.11.0.0.tgz;
+        url: http://mirror.metrocast.net/apache/kafka/0.11.0.0/kafka_2.11-0.11.0.0.tgz
         dest: /home/vagrant
 
     - name: extract kafka binary
       shell: "tar xfz /home/vagrant/kafka_2.11-0.11.0.0.tgz"
 
+    - name: configure kafka for remote consumers
+      lineinfile:
+        path: /home/vagrant/kafka_2.11-0.11.0.0/config/server.properties
+        line: "advertised.listeners=PLAINTEXT://192.168.99.99:9092"
+        insertafter: "^#advertised.listeners=.*"
+        state: present
+      sudo: yes
+
     - name: run kafka
-      shell: "sudo /vagrant/scripts/init.sh"
+      shell: "/home/vagrant/kafka_2.11-0.11.0.0/bin/kafka-server-start.sh /home/vagrant/kafka_2.11-0.11.0.0/config/server.properties"
+      sudo: yes
+

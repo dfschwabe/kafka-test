@@ -13,7 +13,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.define "one" do |s|
     s.vm.box = "ubuntu/trusty64"
-    s.vm.network "private_network", type: "dhcp"
+    s.vm.network "private_network", ip: "192.168.99.99"
     s.vm.hostname = "one"
     s.vm.provision "ansible" do |ansible|
       ansible.playbook = "provision.yml"
